@@ -1,15 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-async function saveItem(listItem){
-    listItem.id = new Date().getTime();
-    let savedItems = [];
-    const response = await AsyncStorage.getItem('items');
+// async function saveItem(listItem){
+//     listItem.id = new Date().getTime();
+//     let savedItems = [];
+//     const response = await AsyncStorage.getItem('items');
     
-    if(response) savedItems = JSON.parse(response);
-    savedItems.push(listItem);
+//     if(response) savedItems = JSON.parse(response);
+//     savedItems.push(listItem);
     
-    return AsyncStorage.setItem('items', JSON.stringify(savedItems));
-}
+//     return AsyncStorage.setItem('items', JSON.stringify(savedItems));
+// }
 
 async function getItems(){
     return AsyncStorage.getItem('items')
@@ -26,8 +26,30 @@ async function getItem(id){
     return savedItems.find( item => item.id === id);
 }
 
+async function saveItem(listItem, id){
+    listItem.id = id ? id : new Date().getTime()
+    const savedItems = await getItems();
+
+    if(id){
+        const index = await savedItems.findIndex(item => item.id === id);
+        savedItems[index] = listItem;
+    }
+    else
+      savedItems.push(listItem);
+
+    return AsyncStorage.setItem('items', JSON.stringify(savedItems));
+}
+
+async function deleteItem(id){
+    let savedItems = await getItems();
+    const index = await savedItems.findIndex(item => item.id === id);
+    savedItems.splice(index, 1);
+    return AsyncStorage.setItem('items', JSON.stringify(savedItems));
+}
+
 module.exports = {
     saveItem,
-    getItems, 
-    getItem
+    getItems,
+    getItem,
+    deleteItem
 }

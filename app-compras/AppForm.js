@@ -20,8 +20,8 @@ export default function AppForm({ route, navigation }) {
     function handleQuantityChange(quantidade){ setQuantidade(quantidade); }
 
     async function handleButtonPress(){ 
-      const listItem = {id: new Date().getTime(), descricao, quantidade: parseInt(quantidade)};
-      Database.saveItem(listItem)
+      const listItem = {descricao, quantidade: parseInt(quantidade)};
+      Database.saveItem(listItem, id)
       .then( response=> navigation.navigate("AppList", listItem));
 
       // let savedItems = [];
